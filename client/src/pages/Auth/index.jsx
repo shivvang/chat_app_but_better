@@ -1,12 +1,97 @@
-import React from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+// eslint-disable-next-line no-unused-vars
+import React, { useState } from "react";
 function Auth() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  const handleLogIn = async () => {};
+  const handleSignIn = async () => {};
   return (
-    <div className="h-[100vw] v-[100vw] flex items-center justify-center">
-      <div className="h-[80vh] bg-white border-2 border-white text-opacity-90 shadow-2xl w-[80vw] md:w-[90vw] lg:w-[70vw] xl:w-[60vw] rounded-3xl grid xl:grid-cols-2">
-        <div className="flex items-center justify-center flex-col">
-          <div className="flex items-center justify-center">
-            <h1 className="text-5xl font-bold md:text-6xl">Hello There</h1>
-          </div>
+    <div className="h-[100vh] flex items-center justify-center bg-black text-white">
+      <div className="h-[80vh] bg-white border-2 border-white shadow-2xl w-[80vw] md:w-[90vw] lg:w-[70vw] xl:w-[60vw] rounded-3xl grid xl:grid-cols-2">
+        <div className="flex flex-col gap-6 items-center justify-center text-black p-8">
+          <h1 className="text-5xl font-bold md:text-6xl">Hello There</h1>
+          <p className="font-medium text-center">Let&apos;s get this Started</p>
+        </div>
+        <div className="flex items-center justify-center w-full p-8">
+          <Tabs className="w-full">
+            <TabsList className="bg-transparent rounded-none w-full flex justify-center">
+              <TabsTrigger
+                value="login"
+                className="data-[state=active]:bg-black text-black text-opacity-90 border-b-2 border-white rounded-none w-1/2 data-[state=active]:text-white data-[state=active]:font-semibold data-[state=active]:border-b-[#0ff0fc] p-3 transition-all duration-300 text-center"
+              >
+                LogIn
+              </TabsTrigger>
+              <TabsTrigger
+                value="signin"
+                className="data-[state=active]:bg-black text-black text-opacity-90 border-b-2 border-white rounded-none w-1/2 data-[state=active]:text-white data-[state=active]:font-semibold data-[state=active]:border-b-[#FF00FF] p-3 transition-all duration-300 text-center"
+              >
+                SignIn
+              </TabsTrigger>
+            </TabsList>
+            <TabsContent
+              className="text-black flex flex-col gap-5 p-8"
+              value="login"
+            >
+              <Input
+                placeholder="Email"
+                type="email"
+                className="border rounded-lg p-2"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+              <Input
+                placeholder="Password"
+                type="password"
+                className="border rounded-lg p-2"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <Button
+                className="bg-black text-white rounded-full p-3 border-2 border-[#0ff0fc]"
+                onClick={handleLogIn}
+              >
+                Log-in
+              </Button>
+            </TabsContent>
+            <TabsContent
+              className="text-black flex flex-col gap-5 p-8"
+              value="signin"
+            >
+              <Input
+                placeholder="Email"
+                type="email"
+                className="border rounded-lg p-2"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+              <Input
+                placeholder="Password"
+                type="password"
+                className="border rounded-lg p-2"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <Input
+                placeholder="Confirm Password"
+                type="password"
+                className="border rounded-lg p-2"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
+              <Button
+                className="bg-black text-white rounded-full p-3 border-2 border-[#FF00FF]"
+                onClick={handleSignIn}
+              >
+                Sign-in
+              </Button>
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
     </div>
