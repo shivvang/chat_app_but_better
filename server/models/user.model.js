@@ -22,10 +22,19 @@ const userSchema = new mongoose.Schema({
   },
 });
 
+const saltRounds = 10;
 userSchema.pre("save", async function (next) {
-  const salt = await genSalt();
-  this.passoword = await hash(this.passoword, salt);
-  next();
+  if (this.isModified("password") || this.isNew) {
+    try {
+      const salt = await genSalt(saltRounds);
+      this.password = await hash(this.password, salt);
+      next();
+    } catch (err) {
+      next(err);
+    }
+  } else {
+    return next();
+  }
 });
 
 const User = mongoose.model("User", userSchema);

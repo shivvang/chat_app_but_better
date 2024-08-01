@@ -13,7 +13,7 @@ export const signup = async (req, res, next) => {
     if (!email || !password)
       return res.status(400).send("email and password is required");
 
-    const user = User.create({ userName, email, password });
+    const user = await User.create({ userName, email, password });
     res.cookie("access_Token", createToken({ email, password }), {
       maxAge,
       secure: true,

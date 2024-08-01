@@ -1,16 +1,65 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
+import { toast } from "sonner";
 // eslint-disable-next-line no-unused-vars
 import React, { useState } from "react";
+import { apiClient } from "@/lib/api-client";
+import { SIGNUP_ROUTE } from "@/utils/constant";
 function Auth() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [userName, setUserName] = useState("");
 
+  const validateSignIn = (email, password, confirmPassword, userName) => {
+    // Email validation regex
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!email) {
+      toast.error("Email is required");
+      return false;
+    } else if (!emailRegex.test(email)) {
+      toast.error("Invalid email format");
+      return false;
+    }
+
+    if (!userName) {
+      toast.error("Username is required");
+      return false;
+    }
+
+    if (!password) {
+      toast.error("Password is required");
+      return false;
+    } else if (password.length < 6) {
+      toast.error("Password must be at least 6 characters long");
+      return false;
+    }
+
+    if (!confirmPassword) {
+      toast.error("Confirm Password is required");
+      return false;
+    } else if (password !== confirmPassword) {
+      toast.error("Passwords do not match");
+      return false;
+    }
+
+    // If all validations pass
+    return true;
+  };
+
+  const handleSignIn = async () => {
+    if (validateSignIn(email, password, confirmPassword, userName)) {
+      const response = await apiClient.post(SIGNUP_ROUTE, {
+        email,
+        password,
+        userName,
+      });
+      console.log("response received", response);
+    }
+  };
   const handleLogIn = async () => {};
-  const handleSignIn = async () => {};
   return (
     <div className="h-[100vh] flex items-center justify-center bg-black text-white">
       <div className="h-[80vh] bg-white border-2 border-white shadow-2xl w-[80vw] md:w-[90vw] lg:w-[70vw] xl:w-[60vw] rounded-3xl grid xl:grid-cols-2">
@@ -39,6 +88,13 @@ function Auth() {
               value="login"
             >
               <Input
+                placeholder="User Name"
+                type="text"
+                className="border rounded-lg p-2"
+                value={userName}
+                onChange={(e) => setUserName(e.target.value)}
+              />
+              <Input
                 placeholder="Email"
                 type="email"
                 className="border rounded-lg p-2"
@@ -63,6 +119,13 @@ function Auth() {
               className="text-black flex flex-col gap-5 p-8"
               value="signin"
             >
+              <Input
+                placeholder="User Name"
+                type="text"
+                className="border rounded-lg p-2"
+                value={userName}
+                onChange={(e) => setUserName(e.target.value)}
+              />
               <Input
                 placeholder="Email"
                 type="email"
