@@ -7,13 +7,14 @@ import React, { useState } from "react";
 import { apiClient } from "@/lib/api-client";
 import { LOGIN_ROUTE, SIGNUP_ROUTE } from "@/utils/constant";
 import { useNavigate } from "react-router-dom";
+import { useAppStore } from "@/zustand/store";
 function Auth() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [userName, setUserName] = useState("");
   const navigate = useNavigate();
-
+  const { setUserDetails } = useAppStore();
   const validateSignIn = (email, password, confirmPassword, userName) => {
     // Email validation regex
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -92,8 +93,8 @@ function Auth() {
         { withCredentials: true }
       );
 
-      console.log("response received", response);
       if (response.status === 201) {
+        setUserDetails(response.data.user);
         navigate("/profile");
       }
     }
@@ -109,8 +110,8 @@ function Auth() {
         },
         { withCredentials: true }
       );
-      console.log("response received", response);
       if (response.status === 200) {
+        setUserDetails(response.data.user);
         navigate("/chat");
       }
     }
