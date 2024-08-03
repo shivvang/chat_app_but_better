@@ -5,12 +5,14 @@ import { toast } from "sonner";
 // eslint-disable-next-line no-unused-vars
 import React, { useState } from "react";
 import { apiClient } from "@/lib/api-client";
-import { SIGNUP_ROUTE } from "@/utils/constant";
+import { LOGIN_ROUTE, SIGNUP_ROUTE } from "@/utils/constant";
+import { useNavigate } from "react-router-dom";
 function Auth() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [userName, setUserName] = useState("");
+  const navigate = useNavigate();
 
   const validateSignIn = (email, password, confirmPassword, userName) => {
     // Email validation regex
@@ -49,17 +51,70 @@ function Auth() {
     return true;
   };
 
+  const validateLogIn = (email, password, userName) => {
+    // Email validation regex
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!email) {
+      toast.error("Email is required");
+      return false;
+    } else if (!emailRegex.test(email)) {
+      toast.error("Invalid email format");
+      return false;
+    }
+
+    if (!userName) {
+      toast.error("Username is required");
+      return false;
+    }
+
+    if (!password) {
+      toast.error("Password is required");
+      return false;
+    } else if (password.length < 6) {
+      toast.error("Password must be at least 6 characters long");
+      return false;
+    }
+
+    // If all validations pass
+    return true;
+  };
+
   const handleSignIn = async () => {
     if (validateSignIn(email, password, confirmPassword, userName)) {
-      const response = await apiClient.post(SIGNUP_ROUTE, {
-        email,
-        password,
-        userName,
-      });
+      const response = await apiClient.post(
+        SIGNUP_ROUTE,
+        {
+          email,
+          password,
+          userName,
+        },
+        { withCredentials: true }
+      );
+
       console.log("response received", response);
+      if (response.status === 201) {
+        navigate("/profile");
+      }
     }
   };
-  const handleLogIn = async () => {};
+  const handleLogIn = async () => {
+    if (validateLogIn(email, password, userName)) {
+      const response = await apiClient.post(
+        LOGIN_ROUTE,
+        {
+          email,
+          password,
+          userName,
+        },
+        { withCredentials: true }
+      );
+      console.log("response received", response);
+      if (response.status === 200) {
+        navigate("/chat");
+      }
+    }
+  };
   return (
     <div className="h-[100vh] flex items-center justify-center bg-black text-white">
       <div className="h-[80vh] bg-white border-2 border-white shadow-2xl w-[80vw] md:w-[90vw] lg:w-[70vw] xl:w-[60vw] rounded-3xl grid xl:grid-cols-2">
@@ -68,7 +123,7 @@ function Auth() {
           <p className="font-medium text-center">Let&apos;s get this Started</p>
         </div>
         <div className="flex items-center justify-center w-full p-8">
-          <Tabs className="w-full">
+          <Tabs className="w-full" defaultValue="login">
             <TabsList className="bg-transparent rounded-none w-full flex justify-center">
               <TabsTrigger
                 value="login"

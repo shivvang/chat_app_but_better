@@ -15,6 +15,7 @@ const userSchema = new mongoose.Schema({
   userName: {
     type: String,
     required: false,
+    unique: true,
   },
   pfp: {
     type: String,

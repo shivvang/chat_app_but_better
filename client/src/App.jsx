@@ -1,8 +1,9 @@
+// eslint-disable-next-line no-unused-vars
 import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import Auth from "./pages/Auth";
-import ChatScreen from "./pages/ChatScreen";
-import Profile from "./pages/Profile";
+import Auth from "./pages/Auth/Auth";
+import ChatScreen from "./pages/ChatScreen/ChatScreen";
+import Profile from "./pages/Profile/Profile";
 
 function App() {
   return (
