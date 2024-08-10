@@ -48,7 +48,7 @@ export const login = async (req, res, next) => {
     const ispasscorrect = compare(user.password, password);
     if (!ispasscorrect) res.status(404).send("password is incorrect");
 
-    res.cookie("accesss_token", createToken(email), {
+    res.cookie("access_Token", createToken(email), {
       maxAge,
       secure: true,
       sameSite: "None",
@@ -60,5 +60,13 @@ export const login = async (req, res, next) => {
   } catch (error) {
     console.log({ error });
     return res.status(500).send("internal server error");
+  }
+};
+
+export const getUserDetails = async (req, res, next) => {
+  try {
+    res.send("youre good bro");
+  } catch (error) {
+    console.log({ error });
   }
 };
