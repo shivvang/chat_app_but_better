@@ -15,5 +15,5 @@ authRoutes.post("/login", login);
 authRoutes.get("/userDetails", verifyToken, getUserDetails);
 authRoutes.post("/updatePass", verifyToken, updatePass);
 authRoutes.post("/add-pfp", verifyToken, upload.single("pfp"), addProfilePhoto);
-authRoutes.post("/remove-pfp", verifyToken, deleteProfilePhoto);
+authRoutes.delete("/remove-pfp", verifyToken, deleteProfilePhoto);
 export default authRoutes;

@@ -117,30 +117,34 @@ function Auth() {
     }
   };
   return (
-    <div className="h-[100vh] flex items-center justify-center bg-black text-white">
-      <div className="h-[80vh] bg-white border-2 border-white shadow-2xl w-[80vw] md:w-[90vw] lg:w-[70vw] xl:w-[60vw] rounded-3xl grid xl:grid-cols-2">
+    <div className="min-h-[100vh] flex items-center justify-center bg-black text-white p-4 md:p-8">
+      <div className="min-h-[80vh] bg-white border-2 border-white shadow-2xl w-full max-w-[80vw] md:max-w-[90vw] lg:max-w-[70vw] xl:max-w-[60vw] rounded-3xl grid grid-cols-1 xl:grid-cols-2">
         <div className="flex flex-col gap-6 items-center justify-center text-black p-8">
-          <h1 className="text-5xl font-bold md:text-6xl">Hello There</h1>
-          <p className="font-medium text-center">Let&apos;s get this Started</p>
+          <h1 className="text-4xl font-bold md:text-5xl lg:text-6xl">
+            Hello There
+          </h1>
+          <p className="font-medium text-center text-lg md:text-xl">
+            Let&apos;s get this Started
+          </p>
         </div>
         <div className="flex items-center justify-center w-full p-8">
           <Tabs className="w-full" defaultValue="login">
             <TabsList className="bg-transparent rounded-none w-full flex justify-center">
               <TabsTrigger
                 value="login"
-                className="data-[state=active]:bg-black text-black text-opacity-90 border-b-2 border-white rounded-none w-1/2 data-[state=active]:text-white data-[state=active]:font-semibold data-[state=active]:border-b-[#0ff0fc] p-3 transition-all duration-300 text-center"
+                className="data-[state=active]:bg-black text-black text-opacity-90 border-b-2 border-white rounded-none w-1/2 data-[state=active]:text-white data-[state=active]:font-semibold data-[state=active]:border-b-[#0ff0fc] p-3 transition-all duration-300 text-center text-lg md:text-xl"
               >
                 LogIn
               </TabsTrigger>
               <TabsTrigger
                 value="signin"
-                className="data-[state=active]:bg-black text-black text-opacity-90 border-b-2 border-white rounded-none w-1/2 data-[state=active]:text-white data-[state=active]:font-semibold data-[state=active]:border-b-[#FF00FF] p-3 transition-all duration-300 text-center"
+                className="data-[state=active]:bg-black text-black text-opacity-90 border-b-2 border-white rounded-none w-1/2 data-[state=active]:text-white data-[state=active]:font-semibold data-[state=active]:border-b-[#FF00FF] p-3 transition-all duration-300 text-center text-lg md:text-xl"
               >
                 SignIn
               </TabsTrigger>
             </TabsList>
             <TabsContent
-              className="text-black flex flex-col gap-5 p-8"
+              className="text-black flex flex-col gap-5 p-4 md:p-8"
               value="login"
             >
               <Input
@@ -172,7 +176,7 @@ function Auth() {
               </Button>
             </TabsContent>
             <TabsContent
-              className="text-black flex flex-col gap-5 p-8"
+              className="text-black flex flex-col gap-5 p-4 md:p-8"
               value="signin"
             >
               <Input
