@@ -95,7 +95,7 @@ function Auth() {
 
       if (response.status === 201) {
         setUserDetails(response.data.user);
-        navigate("/profile");
+        navigate("/chat");
       }
     }
   };

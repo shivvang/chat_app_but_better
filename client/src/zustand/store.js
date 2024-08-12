@@ -7,6 +7,7 @@ import { persist, createJSONStorage } from "zustand/middleware";
 
 //Local Storage persists data even after the browser is closed and reopened.
 //Session Storage persists data only for the duration of the page session (until the page is closed).
+
 export const useAppStore = create(
   persist(
     (...a) => ({
@@ -14,7 +15,7 @@ export const useAppStore = create(
     }),
     {
       name: "app-storage",
-      storage: createJSONStorage(() => sessionStorage),
+      storage: createJSONStorage(() => localStorage),
     }
   )
 );

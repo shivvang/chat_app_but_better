@@ -2,12 +2,13 @@
 // eslint-disable-next-line no-unused-vars
 import React, { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+// import { toast } from "sonner";
 import Auth from "./pages/Auth/Auth";
 import ChatScreen from "./pages/ChatScreen/ChatScreen";
 import Profile from "./pages/Profile/Profile";
 import { useAppStore } from "./zustand/store";
-import { apiClient } from "./lib/api-client";
-import { GET_USER_DETAILS } from "./utils/constant";
+// import { apiClient } from "./lib/api-client";
+// import { GET_USER_DETAILS } from "./utils/constant";
 
 const PrivateRoute = ({ children }) => {
   const { userDetails } = useAppStore();
@@ -23,40 +24,40 @@ const AlreadyAuthenticated = ({ children }) => {
 };
 
 function App() {
-  const { userDetails, setUserDetails } = useAppStore();
-  const [loading, setLoading] = useState(true);
+  // const { userDetails, setUserDetails } = useAppStore();
+  // const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchUserDetails = async () => {
-      try {
-        const response = await apiClient.get(GET_USER_DETAILS, {
-          withCredentials: true,
-        });
-        console.log(response);
-        if (response.data.user) {
-          setUserDetails(response.data);
-        }
-      } catch (error) {
-        console.error(
-          "Error fetching user details:",
-          error.response || error.message
-        );
-        setLoading(false);
-      } finally {
-        setLoading(false);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchUserDetails = async () => {
+  //     try {
+  //       const response = await apiClient.get(GET_USER_DETAILS, {
+  //         withCredentials: true,
+  //       });
+  //       console.log(response);
+  //       if (response.data.user) {
+  //         setUserDetails(response.data.user);
+  //       }
+  //     } catch (error) {
+  //       toast.error(
+  //         "Error fetching user details:",
+  //         error.response || error.message
+  //       );
+  //       setLoading(false);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
 
-    if (!userDetails) {
-      fetchUserDetails();
-    } else {
-      setLoading(false);
-    }
-  }, [userDetails, setUserDetails]);
+  //   if (!userDetails) {
+  //     fetchUserDetails();
+  //   } else {
+  //     setLoading(false);
+  //   }
+  // }, [userDetails, setUserDetails]);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  // if (loading) {
+  //   return <div>Loading...</div>;
+  // }
 
   return (
     <BrowserRouter>

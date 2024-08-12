@@ -1,6 +1,7 @@
 import { compare } from "bcrypt";
 import User from "../models/user.model.js";
 import jwt from "jsonwebtoken";
+import { uploadOnCloudinary } from "../utils/cloudinary.js";
 const { sign } = jwt;
 const maxAge = 3 * 24 * 60 * 60;
 
@@ -65,8 +66,65 @@ export const login = async (req, res, next) => {
 
 export const getUserDetails = async (req, res, next) => {
   try {
-    res.send("youre good bro");
+    const userDetails = await User.findOne(req.email);
+    if (!userDetails) return res.status(404).send("user not found");
+
+    return res.status(200).json({
+      user: {
+        id: userDetails.id,
+        email: userDetails.email,
+        userName: userDetails.userName,
+      },
+    });
   } catch (error) {
     console.log({ error });
   }
 };
+
+export const updatePass = async (req, res, next) => {
+  const { email } = req;
+  const { password } = req.body;
+  if (!password) return res.status(400).send("pass is required");
+
+  const user = await User.findOneAndUpdate(email, { password });
+
+  return res.status(200).json({
+    user: {
+      id: user.id,
+      email: user.email,
+      userName: user.userName,
+    },
+  });
+};
+
+export const addProfilePhoto = async (req, res, next) => {
+  try {
+    if (!req.file.path) return res.status(400).send("file is required");
+    const pfpLocalPath = req.file.path;
+    const pfp = await uploadOnCloudinary(pfpLocalPath);
+
+    //check if file upload is done or not because it is required field  db will definately break
+    if (!pfp) {
+      return res.status(404).send("there was trouble uploading   your file");
+    }
+    const updateUser = await User.findOneAndUpdate(
+      { email: req.email },
+      { pfp: pfp?.url },
+      { new: true, runValidators: true }
+    );
+
+    return res.status(200).json({
+      user: {
+        id: updateUser.id,
+        email: updateUser.email,
+        userName: updateUser.userName,
+        pfp: updateUser.pfp,
+      },
+    });
+  } catch (error) {
+    console.log({ error });
+    return res.status(500).send("internal server error");
+  }
+};
+
+export const deleteProfilePhoto = async () => {};
