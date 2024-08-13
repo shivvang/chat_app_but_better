@@ -3,9 +3,9 @@ import { useAppStore } from "@/zustand/store";
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import ContactsConatiner from "./Contacts-conatiner";
+import ContactsConatiner from "./ContactContainer/ContactConatiner";
 import EmptyChatContainer from "./Empty-chat-container";
-import ChatContainer from "./Chat-container";
+import ChatContainer from "./ChatContainer/ChatContainer";
 
 function ChatScreen() {
   const { userDetails } = useAppStore();
@@ -21,7 +21,7 @@ function ChatScreen() {
   return (
     <div className="flex h-[100vh] text-white overflow-hidden bg-black">
       <ContactsConatiner />
-      <EmptyChatContainer />
+      {/* <EmptyChatContainer /> */}
       <ChatContainer />
     </div>
   );

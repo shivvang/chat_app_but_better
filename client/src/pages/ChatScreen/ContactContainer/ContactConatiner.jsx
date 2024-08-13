@@ -1,7 +1,8 @@
 // eslint-disable-next-line no-unused-vars
 import React from "react";
+import ProfileInfo from "./ProfileInfo";
 
-function ContactsConatiner() {
+function ContactsContainer() {
   return (
     <div className="relative md:w-[35vw] lg:w-[30vw] xl:w-[20vw] bg-black border-r-2 border-[#2f303b] w-full">
       <div className="pt-3 text-neon-green">ChatKun</div>
@@ -16,11 +17,12 @@ function ContactsConatiner() {
           <Title title="Channels" />
         </div>
       </div>
+      <ProfileInfo />
     </div>
   );
 }
 
-export default ContactsConatiner;
+export default ContactsContainer;
 
 const Title = ({ title }) => {
   return (
