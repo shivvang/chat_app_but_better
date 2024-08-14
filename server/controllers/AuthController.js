@@ -210,3 +210,26 @@ export const deleteProfilePhoto = async (req, res, next) => {
     return res.status(500).send("internal server error");
   }
 };
+
+export const logOut = async (req, res, next) => {
+  try {
+    // Check the cookie exists before clearing
+    const token = req.cookies.access_Token;
+    if (!token) {
+      return res.status(400).send("No active session found.");
+    }
+
+    // Clear  access token cookie
+
+    res.clearCookie("access_Token", {
+      secure: true,
+      sameSite: "None",
+      httpOnly: true, // Ensures cookie is not accessible via client-side JS
+    });
+
+    return res.status(200).send("Logged out successfully");
+  } catch (error) {
+    console.error("Error during logout:", error);
+    res.status(500).send("Internal server error during logout");
+  }
+};

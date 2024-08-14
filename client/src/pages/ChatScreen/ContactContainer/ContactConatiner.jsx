@@ -1,6 +1,7 @@
 // eslint-disable-next-line no-unused-vars
 import React from "react";
 import ProfileInfo from "./ProfileInfo";
+import NewDM from "./NewDM";
 
 function ContactsContainer() {
   return (
@@ -9,6 +10,7 @@ function ContactsContainer() {
       <div className="my-5">
         <div className="flex items-center justify-between pr-10">
           <Title title="Direct Messages" />
+          <NewDM />
         </div>
       </div>
 

@@ -6,3 +6,4 @@ export const GET_USER_DETAILS = `${AUTH_ROUTES}/userDetails`;
 export const UPDATE_PASS = `${AUTH_ROUTES}/updatePass`;
 export const ADD_PFP = `${AUTH_ROUTES}/add-pfp`;
 export const REMOVE_PFP = `${AUTH_ROUTES}/remove-pfp`;
+export const LOGOUT_ROUTE = `${AUTH_ROUTES}/logout`;
