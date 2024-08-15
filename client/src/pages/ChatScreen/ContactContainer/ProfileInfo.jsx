@@ -15,7 +15,10 @@ import { apiClient } from "@/lib/api-client";
 import { LOGOUT_ROUTE } from "@/utils/constant";
 
 function ProfileInfo() {
-  const { userDetails, setUserDetails } = useAppStore();
+  const { userDetails, setUserDetails } = useAppStore((state) => ({
+    userDetails: state.userDetails,
+    setUserDetails: state.setUserDetails,
+  }));
   const navigate = useNavigate();
 
   const logout = async () => {
@@ -28,9 +31,8 @@ function ProfileInfo() {
         }
       );
 
-      if (response.status === 200 && response.statusText === "OK") {
+      if (response.status === 200) {
         setUserDetails(null);
-        localStorage.removeItem("app-storage");
         navigate("/auth");
       }
     } catch (error) {

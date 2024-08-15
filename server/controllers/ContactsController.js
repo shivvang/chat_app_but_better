@@ -4,37 +4,37 @@ export const SearchContacts = async (req, res, next) => {
   try {
     const { searchTerm } = req.body;
 
-    // Input validation
+    let contacts;
+
     if (
-      !searchTerm ||
-      typeof searchTerm !== "string" ||
-      searchTerm.trim() === ""
+      searchTerm &&
+      typeof searchTerm === "string" &&
+      searchTerm.trim() !== ""
     ) {
-      return res.status(400).json({
-        error: "Search term is required and must be a non-empty string",
+      // Sanitize and validate search term
+      const sanitizedSearchTerm = searchTerm.replace(
+        /[.*+?^${}()|[\]\\]/g,
+        "\\$&"
+      );
+
+      // Limit input length to mitigate ReDoS risk
+      if (sanitizedSearchTerm.length > 100) {
+        return res.status(400).json({ error: "Search term is too long" });
+      }
+
+      const regex = new RegExp(sanitizedSearchTerm, "i");
+
+      // Query the database based on the search term
+      contacts = await User.find({
+        $and: [
+          { _id: { $ne: req.userId } }, // Exclude current user
+          { $or: [{ userName: regex }, { email: regex }] }, // Match by username or email
+        ],
       });
+    } else {
+      // If no search term, return all users except the current user
+      contacts = await User.find({ email: { $ne: req.email } });
     }
-
-    // Sanitize and validate search term
-    const sanitizedSearchTerm = searchTerm.replace(
-      /[.*+?^${}()|[\]\\]/g,
-      "\\$&"
-    );
-
-    // Limit input length to mitigate ReDoS risk
-    if (sanitizedSearchTerm.length > 100) {
-      return res.status(400).json({ error: "Search term is too long" });
-    }
-
-    const regex = new RegExp(sanitizedSearchTerm, "i");
-
-    // Query the database
-    const contacts = await User.find({
-      $and: [
-        { _id: { $ne: req.userId } }, // Exclude current user
-        { $or: [{ userName: regex }, { email: regex }] }, // Match by username or email
-      ],
-    });
 
     // Return results or empty array if no matches
     return res
