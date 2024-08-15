@@ -30,6 +30,7 @@ function ProfileInfo() {
 
       if (response.status === 200 && response.statusText === "OK") {
         setUserDetails(null);
+        localStorage.removeItem("app-storage");
         navigate("/auth");
       }
     } catch (error) {

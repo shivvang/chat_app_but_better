@@ -6,6 +6,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import connectDb from "./Db/Db.js";
 import authRoutes from "./routes/Auth.routes.js";
+import contactRoutes from "./routes/contact.routes.js";
 
 const app = express();
 app.use(
@@ -20,7 +21,7 @@ app.use(express.static("public"));
 app.use(cookieParser());
 app.use(express.json());
 app.use("/api/auth", authRoutes);
-
+app.use("/api/contacts", contactRoutes);
 connectDb()
   .then(() => {
     app.on("error", (err) => {
