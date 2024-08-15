@@ -23,9 +23,27 @@ export const SocketContextProvider = ({ children }) => {
       socket.current.on("connect", () => {
         console.log(`connected to socket server`);
       });
+
+      const handleRecieveMessage = (message) => {
+        const { selectedChatType, selectedChatData, addMessage } =
+          useAppStore.getState();
+
+        if (
+          (selectedChatType !== undefined &&
+            selectedChatData._id === message.sender._id) ||
+          selectedChatData._id === message.recipient._id
+        ) {
+          console.log("message recieved", message);
+          addMessage(message);
+        }
+      };
+
+      socket.current.on("recieveMessage", handleRecieveMessage);
     }
     return () => {
-      socket.current.disconnect();
+      if (socket.current) {
+        socket.current.disconnect();
+      }
     };
   }, [userDetails]);
 

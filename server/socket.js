@@ -1,4 +1,5 @@
 import { Server as socketIoServer } from "socket.io";
+import Message from "./models/message.model.js";
 const socketSetup = (server) => {
   const io = new socketIoServer(server, {
     cors: {
@@ -19,6 +20,24 @@ const socketSetup = (server) => {
     }
   };
 
+  const SendMessage = async (message) => {
+    const senderSocketId = userSocketMap.get(message.sender);
+    const recipientSocketId = userSocketMap.get(message.recipient);
+
+    const messageBeingShared = await Message.create(message);
+
+    const messageDataToBeShared = await Message.findById(messageBeingShared._id)
+      .populate("sender", "id email userName")
+      .populate("recipient", "id email userName");
+
+    if (recipientSocketId) {
+      io.to(recipientSocketId).emit("recieveMessage", messageDataToBeShared);
+    }
+    if (senderSocketId) {
+      io.to(senderSocketId).emit("recieveMessage", messageDataToBeShared);
+    }
+  };
+
   io.on("connection", (socket) => {
     const userId = socket.handshake.query.userId;
     if (userId) {
@@ -27,10 +46,10 @@ const socketSetup = (server) => {
     } else {
       console.log("user id not provided in here");
     }
-  });
 
-  io.on("disconnect", (socket) => {
-    disconnect(socket);
+    socket.on("sendMessage", SendMessage);
+
+    socket.on("disconnect", () => disconnect(socket));
   });
 };
 export default socketSetup;
