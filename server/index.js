@@ -7,6 +7,7 @@ import cookieParser from "cookie-parser";
 import connectDb from "./Db/Db.js";
 import authRoutes from "./routes/Auth.routes.js";
 import contactRoutes from "./routes/contact.routes.js";
+import socketSetup from "./socket.js";
 
 const app = express();
 app.use(
@@ -28,9 +29,10 @@ connectDb()
       console.log("errr", err);
       throw err;
     });
-    app.listen(process.env.PORT || 8000, () => {
+    const server = app.listen(process.env.PORT || 8000, () => {
       console.log(`Server is running at port : ${process.env.PORT}`);
     });
+    socketSetup(server);
   })
   .catch((err) => {
     console.log("mongo db connection failed !!", err);
