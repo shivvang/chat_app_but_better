@@ -6,8 +6,8 @@ import { deleteImageFromCloudinary } from "../utils/deleteImageFromCLoudinary.js
 const { sign } = jwt;
 const maxAge = 3 * 24 * 60 * 60;
 
-const createToken = (email) => {
-  return sign({ email }, process.env.JWT_KEY, { expiresIn: maxAge });
+const createToken = (email, userId) => {
+  return sign({ email, userId }, process.env.JWT_KEY, { expiresIn: maxAge });
 };
 
 export const signup = async (req, res, next) => {
@@ -26,7 +26,7 @@ export const signup = async (req, res, next) => {
     }
 
     const user = await User.create({ userName, email, password });
-    res.cookie("access_Token", createToken(email), {
+    res.cookie("access_Token", createToken(email, user.id), {
       maxAge,
       secure: true,
       sameSite: "None",
@@ -60,7 +60,7 @@ export const login = async (req, res, next) => {
     const ispasscorrect = compare(user.password, password);
     if (!ispasscorrect) res.status(404).send("password is incorrect");
 
-    res.cookie("access_Token", createToken(email), {
+    res.cookie("access_Token", createToken(email, user.id), {
       maxAge,
       secure: true,
       sameSite: "None",

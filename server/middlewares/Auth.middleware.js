@@ -6,8 +6,8 @@ export const verifyToken = (req, res, next) => {
 
   jwt.verify(token, process.env.JWT_KEY, (err, payload) => {
     if (err) return res.status(403).send("Token is invalid");
-
     req.email = payload.email;
+    req.userId = payload.userId;
     next();
   });
 };

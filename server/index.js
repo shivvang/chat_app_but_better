@@ -7,6 +7,7 @@ import cookieParser from "cookie-parser";
 import connectDb from "./Db/Db.js";
 import authRoutes from "./routes/Auth.routes.js";
 import contactRoutes from "./routes/contact.routes.js";
+import messagesRouter from "./routes/message.routes.js";
 import socketSetup from "./socket.js";
 
 const app = express();
@@ -23,6 +24,7 @@ app.use(cookieParser());
 app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/contacts", contactRoutes);
+app.use("/api/messages", messagesRouter);
 connectDb()
   .then(() => {
     app.on("error", (err) => {
