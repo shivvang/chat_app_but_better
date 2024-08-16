@@ -25,7 +25,6 @@ function MessageContainer() {
         );
 
         if (response.data.messages) {
-          console.log("what we got here", response);
           setSelectedChatMessages(response.data.messages);
         }
       } catch (error) {
@@ -43,25 +42,29 @@ function MessageContainer() {
     }
   }, [selectedChatMessages]);
 
+  //This function processes all the messages and groups them by date
   const handleDateForMessages = () => {
     let lastDate = null;
     return selectedChatMessages?.map((message, idx) => {
-      const messageDate = moment(message.timestamp).format("YYYY-MM-DD");
+      const messageDate = moment(message.createdAt).format("YYYY-MM-DD");
+
       const showDate = messageDate !== lastDate;
       lastDate = messageDate;
+
       return (
         <div key={idx}>
           {showDate && (
             <div className="text-center text-gray-500 my-2">
-              {moment(message.timestamp).format("LL")}
+              {moment(message.createdAt).format("LL")}
             </div>
           )}
-          {selectedChatType === "contact" && renderMessages(message)}
+          {renderMessages(message)}
         </div>
       );
     });
   };
 
+  //This function handles the rendering of individual messages,
   const renderMessages = (message) => {
     return (
       <div
@@ -80,8 +83,9 @@ function MessageContainer() {
             {message.content}
           </div>
         )}
+
         <div className="text-xs text-gray-600">
-          {moment(message.timestamp).format("LT")}
+          {moment(message.createdAt).format("LT")}{" "}
         </div>
       </div>
     );
