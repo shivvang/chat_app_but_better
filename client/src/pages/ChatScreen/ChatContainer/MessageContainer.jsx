@@ -1,10 +1,75 @@
 // eslint-disable-next-line no-unused-vars
-import React from "react";
+import React, { useEffect, useRef } from "react";
+import { useAppStore } from "@/zustand/store";
+import moment from "moment";
 
 function MessageContainer() {
+  const scrollref = useRef();
+  const {
+    selectedChatType,
+    selectedChatData,
+    userDetails,
+    selectedChatMessages,
+  } = useAppStore();
+
+  useEffect(() => {
+    if (scrollref.current) {
+      scrollref.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [selectedChatMessages]);
+
+  const handleDateForMessages = () => {
+    let lastDate = null;
+    return selectedChatMessages?.map((message, idx) => {
+      const messageDate = moment(message.timestamp).format("YYYY-MM-DD");
+      const showDate = messageDate !== lastDate;
+      lastDate = messageDate;
+      return (
+        <div key={idx}>
+          {showDate && (
+            <div className="text-center text-gray-500 my-2">
+              {moment(message.timestamp).format("LL")}
+            </div>
+          )}
+          {selectedChatType === "contact" && renderMessages(message)}
+        </div>
+      );
+    });
+  };
+
+  const renderMessages = (message) => {
+    return (
+      <div
+        className={`my-1 ${
+          message.sender === selectedChatData._id ? "text-left" : "text-right"
+        }`}
+      >
+        {message.messageType === "text" && (
+          <div
+            className={`${
+              message.sender !== userDetails.id
+                ? "bg-[#8417ff]/5 text-[#8417ff]/90 border-[#8417ff]/50"
+                : "bg-[#2a2b33]/5 text-white/50 border-[#ffff]/20"
+            } border inline-block p-4 rounded max-w-[70%] break-words`}
+          >
+            {message.content}
+          </div>
+        )}
+        <div className="text-xs text-gray-600">
+          {moment(message.timestamp).format("LT")}
+        </div>
+      </div>
+    );
+  };
+
   return (
-    <div className="flex-1 overflow-y-auto p-4 px-6 md:px-8 bg-black text-white scrollbar-hidden md:w-[65vw] lg:w-[70vw] xl:w-[80vw] w-full">
-      <div className="text-neon-green">MessageContainer</div>
+    <div className="flex-1 overflow-y-auto p-4 px-6 md:px-8 bg-black text-white scrollbar-hidden w-full">
+      {selectedChatMessages?.length ? (
+        handleDateForMessages()
+      ) : (
+        <p className="text-center text-gray-500">No messages yet</p>
+      )}
+      <div ref={scrollref} />
     </div>
   );
 }
