@@ -1,7 +1,7 @@
 import { compare } from "bcrypt";
 import User from "../models/user.model.js";
 import jwt from "jsonwebtoken";
-import { uploadOnCloudinary } from "../utils/uploadpfptoCLoudinary.js";
+import { uploadOnCloudinary } from "../utils/uploadOnCloudinary.js";
 import { deleteImageFromCloudinary } from "../utils/deleteImageFromCLoudinary.js";
 const { sign } = jwt;
 const maxAge = 3 * 24 * 60 * 60;

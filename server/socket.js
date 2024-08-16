@@ -26,6 +26,8 @@ const socketSetup = (server) => {
 
     const messageBeingShared = await Message.create(message);
 
+    console.log("stuff is in here", messageBeingShared);
+
     const messageDataToBeShared = await Message.findById(messageBeingShared._id)
       .populate("sender", "id email userName")
       .populate("recipient", "id email userName");

@@ -1,5 +1,6 @@
 import Message from "../models/message.model.js";
 import mongoose from "mongoose";
+import { uploadOnCloudinary } from "../utils/uploadOnCloudinary.js";
 
 export const getMessages = async (req, res, next) => {
   try {
@@ -29,5 +30,31 @@ export const getMessages = async (req, res, next) => {
   } catch (error) {
     console.error("Error fetching messages:", error);
     return res.status(500).json({ error: "Internal server error." });
+  }
+};
+
+export const uploadFile = async (req, res, next) => {
+  console.log("we know at least there is no problem in here");
+  try {
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({ message: "No files uploaded" });
+    }
+
+    const uploadedFiles = [];
+
+    for (const file of req.files) {
+      const result = await uploadOnCloudinary(file.path);
+      if (result) {
+        uploadedFiles.push(result.url); // Store the Cloudinary URL
+      }
+    }
+
+    return res.status(200).json({
+      message: "Files uploaded successfully",
+      files: uploadedFiles, //   array of file URLs
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal server error" });
   }
 };

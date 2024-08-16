@@ -13,3 +13,4 @@ export const SEARCH_CONTACT = `${CONTACTS_ROUTES}/search`;
 
 export const MESSAGE_ROUTES = "/api/messages";
 export const GET_MESSAGE_ROUTE = `${MESSAGE_ROUTES}/get-messages`;
+export const UPLOAD_FILE_ROUTE = `${MESSAGE_ROUTES}/upload-file`;

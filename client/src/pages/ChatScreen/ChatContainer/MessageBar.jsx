@@ -6,10 +6,17 @@ import { IoSend } from "react-icons/io5";
 import { RiEmojiStickerLine } from "react-icons/ri";
 import { useAppStore } from "@/zustand/store";
 import { useSocket } from "@/context/SocketContext";
+import { apiClient } from "@/lib/api-client";
+import { UPLOAD_FILE_ROUTE } from "@/utils/constant";
 
 function MessageBar() {
   const emojiPickerRef = useRef();
+  const fileInputRef = useRef();
   const [message, setMessage] = useState("");
+  const [uploadedFileUrls, setUploadedFileUrls] = useState([]);
+  const [disableButtonUntilFIleUploaded, setDisableButtonUntilFIleUploaded] =
+    useState(false);
+
   const [emojiPicker, setEmojiPicker] = useState(false);
   const { selectedChatType, selectedChatData, userDetails } = useAppStore();
   const socket = useSocket();
@@ -32,16 +39,48 @@ function MessageBar() {
     setMessage((msg) => msg + emoji.emoji);
   };
 
-  const handleSendMessage = async () => {
-    console.log("Socket:", socket);
-    if (selectedChatType === "contact" && userDetails && selectedChatData) {
-      socket.emit("sendMessage", {
-        sender: userDetails.id,
-        content: message,
-        recipient: selectedChatData._id,
-        messageType: "text",
-        fileUrl: undefined,
+  const handleFileAttachmentClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  const handleFileChange = async (event) => {
+    setDisableButtonUntilFIleUploaded(true);
+    const selectedFiles = Array.from(event.target.files);
+    const formData = new FormData();
+
+    selectedFiles.forEach((file) => {
+      formData.append("files", file);
+    });
+
+    try {
+      const response = await apiClient.post(UPLOAD_FILE_ROUTE, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
       });
+
+      if (response.data.files) setUploadedFileUrls(response.data.files);
+      setDisableButtonUntilFIleUploaded(false);
+    } catch (error) {
+      console.error("Error uploading files:", error);
+      setDisableButtonUntilFIleUploaded(false);
+    }
+  };
+
+  const handleSendMessage = async () => {
+    if (selectedChatType === "contact" && userDetails && selectedChatData) {
+      const messagePayload = {
+        sender: userDetails.id,
+        recipient: selectedChatData._id,
+        messageType: uploadedFileUrls.length ? "file" : "text",
+        fileUrl: uploadedFileUrls.length ? uploadedFileUrls : undefined,
+        content: uploadedFileUrls.length ? undefined : message,
+      };
+
+      socket.emit("sendMessage", messagePayload);
+
+      setMessage("");
+      setUploadedFileUrls([]);
     }
   };
 
@@ -54,9 +93,19 @@ function MessageBar() {
           value={message}
           onChange={(e) => setMessage(e.target.value)}
         />
-        <button className="text-neutral-500 hover:text-neon-green focus:text-neon-green duration-300 transition-all">
+        <button
+          className="text-neutral-500 hover:text-neon-green focus:text-neon-green duration-300 transition-all"
+          onClick={handleFileAttachmentClick}
+        >
           <GrAttachment className="text-xl md:text-2xl" />
         </button>
+        <input
+          type="file"
+          className="hidden"
+          ref={fileInputRef}
+          onChange={handleFileChange}
+          multiple // Allow multiple file selection
+        />
         <div className="relative">
           <button
             className="text-neutral-500 hover:text-neon-yellow focus:text-neon-yellow duration-300 transition-all"
@@ -78,6 +127,7 @@ function MessageBar() {
         <button
           className="bg-neon-purple rounded-md flex items-center justify-center p-3 md:p-5 focus:border-none hover:bg-neon-pink focus:bg-neon-pink duration-300 transition-all"
           onClick={handleSendMessage}
+          disabled={disableButtonUntilFIleUploaded}
         >
           <IoSend className="text-xl md:text-2xl text-white" />
         </button>
