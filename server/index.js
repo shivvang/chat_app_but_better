@@ -8,6 +8,7 @@ import connectDb from "./Db/Db.js";
 import authRoutes from "./routes/Auth.routes.js";
 import contactRoutes from "./routes/contact.routes.js";
 import messagesRouter from "./routes/message.routes.js";
+import RoomRoutes from "./routes/room.routes.js";
 import socketSetup from "./socket.js";
 
 const app = express();
@@ -25,6 +26,7 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/contacts", contactRoutes);
 app.use("/api/messages", messagesRouter);
+app.use("/api/rooms", RoomRoutes);
 connectDb()
   .then(() => {
     app.on("error", (err) => {

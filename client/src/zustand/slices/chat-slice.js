@@ -2,6 +2,8 @@ export const createChatSlice = (set, get) => ({
   selectedChatType: undefined,
   selectedChatData: undefined,
   selectedChatMessages: [],
+  rooms: [],
+  setRooms: (rooms) => set({ rooms }),
   setSelectedChatType: (selectedChatType) => set({ selectedChatType }),
   setSelectedChatData: (selectedChatData) => set({ selectedChatData }),
   setSelectedChatMessages: (selectedChatMessages) =>
@@ -32,5 +34,9 @@ export const createChatSlice = (set, get) => ({
         },
       ],
     });
+  },
+  addRoom: (room) => {
+    const rooms = get().rooms;
+    set({ rooms: [room, ...rooms] });
   },
 });

@@ -1,7 +1,8 @@
 // eslint-disable-next-line no-unused-vars
 import React from "react";
 import ProfileInfo from "./ProfileInfo";
-import NewDM from "./NewDM";
+import NewConversation from "./NewConversation";
+import NewRoom from "./NewRoom";
 
 function ContactsContainer() {
   return (
@@ -9,14 +10,15 @@ function ContactsContainer() {
       <div className="pt-3 text-neon-green">ChatKun</div>
       <div className="my-5">
         <div className="flex items-center justify-between pr-10">
-          <Title title="Direct Messages" />
-          <NewDM />
+          <Title title="Conversations" />
+          <NewConversation />
         </div>
       </div>
 
       <div className="my-5">
         <div className="flex items-center justify-between pr-10">
-          <Title title="Channels" />
+          <Title title="Rooms" />
+          <NewRoom />
         </div>
       </div>
       <ProfileInfo />

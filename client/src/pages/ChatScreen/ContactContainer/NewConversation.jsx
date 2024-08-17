@@ -23,7 +23,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { useAppStore } from "@/zustand/store";
 
-function NewDM() {
+function NewConversation() {
   const [NewContact, setNewContact] = useState(false);
   const [searchedContact, setSearchedContacts] = useState([]);
   const { setSelectedChatType, setSelectedChatData } = useAppStore();
@@ -147,4 +147,4 @@ function NewDM() {
   );
 }
 
-export default NewDM;
+export default NewConversation;
