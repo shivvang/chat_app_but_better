@@ -4,7 +4,8 @@ import { useAppStore } from "@/zustand/store";
 import moment from "moment";
 import { apiClient } from "@/lib/api-client";
 import { GET_MESSAGE_ROUTE } from "@/utils/constant";
-
+import { MdFolder } from "react-icons/md";
+import { IoMdArrowRoundDown } from "react-icons/io";
 function MessageContainer() {
   const scrollref = useRef();
   const {
@@ -64,8 +65,73 @@ function MessageContainer() {
     });
   };
 
+  const checkIfImage = (filePath) => {
+    const imageRegex = /\.(jpg|jpeg|png|gif|bmp|webp|tiff|svg)$/i;
+    return imageRegex.test(filePath);
+  };
+
+  const downloadFile = (url) => {
+    fetch(url)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Failed to download file");
+        }
+        return response.blob();
+      })
+      .then((blob) => {
+        // Create a download link for the file
+        const fileUrl = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = fileUrl;
+
+        // Set the filename for the download
+        const fileName = url.split("/").pop();
+        link.setAttribute("download", fileName);
+
+        // Append the link, click it, then remove it
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+
+        // Revoke the object URL to free memory
+        window.URL.revokeObjectURL(fileUrl);
+      })
+      .catch((error) => {
+        console.error("Error downloading the file:", error);
+      });
+  };
   //This function handles the rendering of individual messages,
   const renderMessages = (message) => {
+    const renderFiles = (fileUrls) => {
+      return fileUrls.map((url, index) => {
+        return checkIfImage(url) ? (
+          <div
+            key={index}
+            className="cursor-pointer my-2"
+            onClick={() => downloadFile(url)}
+          >
+            <img src={url} height={300} width={300} alt={`file-${index}`} />
+          </div>
+        ) : (
+          <div
+            key={index}
+            className="my-2 flex items-center justify-center gap-4"
+          >
+            <span className="text-white/8 text-3xl bg-black/20 rounded-full p-3">
+              <MdFolder />
+            </span>
+            <span>{url.split("/").pop()}</span>
+            <span
+              className="bg-black/20 p-3 text-2xl rounded-full hover:bg-black/50 cursor-pointer transition-all duration-300"
+              onClick={() => downloadFile(url)}
+            >
+              <IoMdArrowRoundDown />
+            </span>
+          </div>
+        );
+      });
+    };
+
     return (
       <div
         className={`my-1 ${
@@ -84,8 +150,20 @@ function MessageContainer() {
           </div>
         )}
 
+        {message.messageType === "file" && (
+          <div
+            className={`${
+              message.sender !== userDetails.id
+                ? "bg-[#8417ff]/5 text-[#8417ff]/90 border-[#8417ff]/50"
+                : "bg-[#2a2b33]/5 text-white/50 border-[#ffff]/20"
+            } border inline-block p-4 rounded max-w-[70%] break-words`}
+          >
+            {renderFiles(message.fileUrl)}
+          </div>
+        )}
+
         <div className="text-xs text-gray-600">
-          {moment(message.createdAt).format("LT")}{" "}
+          {moment(message.createdAt).format("LT")}
         </div>
       </div>
     );
