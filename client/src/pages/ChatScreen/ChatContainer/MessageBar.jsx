@@ -57,6 +57,7 @@ function MessageBar() {
     try {
       const response = await apiClient.post(UPLOAD_FILE_ROUTE, formData, {
         headers: { "Content-Type": "multipart/form-data" },
+        withCredentials: true,
       });
 
       if (response.data.files) setUploadedFileUrls(response.data.files);
@@ -125,7 +126,11 @@ function MessageBar() {
           )}
         </div>
         <button
-          className="bg-neon-purple rounded-md flex items-center justify-center p-3 md:p-5 focus:border-none hover:bg-neon-pink focus:bg-neon-pink duration-300 transition-all"
+          className={`rounded-md flex items-center justify-center p-3 md:p-5 focus:border-none duration-300 transition-all ${
+            disableButtonUntilFIleUploaded
+              ? "bg-gray-500 cursor-not-allowed"
+              : "bg-neon-pink hover:bg-neon-purple focus:bg-neon-purple"
+          }`}
           onClick={handleSendMessage}
           disabled={disableButtonUntilFIleUploaded}
         >

@@ -34,7 +34,6 @@ export const getMessages = async (req, res, next) => {
 };
 
 export const uploadFile = async (req, res, next) => {
-  console.log("we know at least there is no problem in here");
   try {
     if (!req.files || req.files.length === 0) {
       return res.status(400).json({ message: "No files uploaded" });
