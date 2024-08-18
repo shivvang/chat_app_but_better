@@ -3,7 +3,7 @@ import React, { useEffect, useRef } from "react";
 import { useAppStore } from "@/zustand/store";
 import moment from "moment";
 import { apiClient } from "@/lib/api-client";
-import { GET_MESSAGE_ROUTE } from "@/utils/constant";
+import { GET_MESSAGE_ROUTE, GET_ROOM_MESSAGES } from "@/utils/constant";
 import { MdFolder } from "react-icons/md";
 import { IoMdArrowRoundDown } from "react-icons/io";
 function MessageContainer() {
@@ -32,9 +32,25 @@ function MessageContainer() {
         console.log({ error });
       }
     };
+    const getRoomMessages = async () => {
+      try {
+        const response = await apiClient.get(
+          `${GET_ROOM_MESSAGES}/${selectedChatData._id}`,
+          {
+            withCredentials: true,
+          }
+        );
 
+        if (response.data.messages) {
+          setSelectedChatMessages(response.data.messages);
+        }
+      } catch (error) {
+        console.log({ error });
+      }
+    };
     if (selectedChatData?._id) {
       if (selectedChatType === "contact") getMessages();
+      else if (selectedChatType === "room") getRoomMessages();
     }
   }, [selectedChatType, selectedChatData, setSelectedChatMessages]);
   useEffect(() => {

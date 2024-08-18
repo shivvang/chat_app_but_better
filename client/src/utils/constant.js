@@ -18,3 +18,4 @@ export const UPLOAD_FILE_ROUTE = `${MESSAGE_ROUTES}/upload-file`;
 export const ROOM_ROUTES = "/api/rooms";
 export const CREATE_ROOM = `${ROOM_ROUTES}/create-room`;
 export const GET_ROOM = `${ROOM_ROUTES}/get-rooms`;
+export const GET_ROOM_MESSAGES = `${ROOM_ROUTES}/get-room-messages`;

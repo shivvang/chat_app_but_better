@@ -61,3 +61,40 @@ export const getRooms = async (req, res, next) => {
     });
   }
 };
+
+export const getRoomMessages = async (req, res) => {
+  const { roomId } = req.params;
+
+  if (!roomId) {
+    return res.status(400).json({ message: "Room ID is required." });
+  }
+
+  try {
+    // Fetch the room and populate the messages and sender details
+    const room = await Room.findById(roomId)
+      .populate({
+        path: "messages",
+        populate: {
+          path: "sender",
+          select: "id userName email",
+        },
+      })
+      .exec();
+
+    // Check if the room exists
+    if (!room) {
+      return res.status(404).json({ message: "Room not found." });
+    }
+
+    // Return the messages
+    return res.status(200).json({ messages: room.messages });
+  } catch (error) {
+    console.error("Error fetching room messages:", error.message);
+
+    // Return a generic error message to the client
+    return res.status(500).json({
+      message: "Internal server error. Please try again later.",
+      error: error.message || "Unknown error",
+    });
+  }
+};
