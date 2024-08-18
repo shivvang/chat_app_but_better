@@ -13,7 +13,7 @@ import { uploadPfp } from "../middlewares/multerPfp.middleware.js";
 const authRoutes = Router();
 authRoutes.post("/signup", signup);
 authRoutes.post("/login", login);
-authRoutes.get("/userDetails", verifyToken, getUserDetails);
+authRoutes.get("/userDetails", getUserDetails);
 authRoutes.post("/updatePass", verifyToken, updatePass);
 authRoutes.post(
   "/add-pfp",

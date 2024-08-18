@@ -37,8 +37,6 @@ const socketSetup = (server) => {
       // Create the new message in the database
       const newMessage = await Message.create(message);
 
-      console.log("New message created:", newMessage);
-
       // Populate the message with sender and recipient details
       const populatedMessage = await Message.findById(newMessage._id)
         .populate("sender", "id email userName")
@@ -46,12 +44,12 @@ const socketSetup = (server) => {
 
       // Send the message to the recipient if they are connected
       if (recipientSocketId) {
-        io.to(recipientSocketId).emit("receiveMessage", populatedMessage);
+        io.to(recipientSocketId).emit("recieveMessage", populatedMessage);
       }
 
       // Send the message to the sender as confirmation
       if (senderSocketId) {
-        io.to(senderSocketId).emit("receiveMessage", populatedMessage);
+        io.to(senderSocketId).emit("recieveMessage", populatedMessage);
       }
     } catch (error) {
       console.error("Error sending message:", error.message);
