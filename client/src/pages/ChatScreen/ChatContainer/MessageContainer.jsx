@@ -33,7 +33,7 @@ function MessageContainer() {
       }
     };
 
-    if (selectedChatData._id) {
+    if (selectedChatData?._id) {
       if (selectedChatType === "contact") getMessages();
     }
   }, [selectedChatType, selectedChatData, setSelectedChatMessages]);
@@ -59,7 +59,8 @@ function MessageContainer() {
               {moment(message.createdAt).format("LL")}
             </div>
           )}
-          {renderMessages(message)}
+          {selectedChatType === "contact" && renderMessages(message)}
+          {selectedChatType === "room" && renderRoomMessages(message)}
         </div>
       );
     });
@@ -136,6 +137,74 @@ function MessageContainer() {
       <div
         className={`my-1 ${
           message.sender === selectedChatData._id ? "text-left" : "text-right"
+        }`}
+      >
+        {message.messageType === "text" && (
+          <div
+            className={`${
+              message.sender !== userDetails.id
+                ? "bg-[#8417ff]/5 text-[#8417ff]/90 border-[#8417ff]/50"
+                : "bg-[#2a2b33]/5 text-white/50 border-[#ffff]/20"
+            } border inline-block p-4 rounded max-w-[70%] break-words`}
+          >
+            {message.content}
+          </div>
+        )}
+
+        {message.messageType === "file" && (
+          <div
+            className={`${
+              message.sender !== userDetails.id
+                ? "bg-[#8417ff]/5 text-[#8417ff]/90 border-[#8417ff]/50"
+                : "bg-[#2a2b33]/5 text-white/50 border-[#ffff]/20"
+            } border inline-block p-4 rounded max-w-[70%] break-words`}
+          >
+            {renderFiles(message.fileUrl)}
+          </div>
+        )}
+
+        <div className="text-xs text-gray-600">
+          {moment(message.createdAt).format("LT")}
+        </div>
+      </div>
+    );
+  };
+
+  const renderRoomMessages = (message) => {
+    const renderFiles = (fileUrls) => {
+      return fileUrls.map((url, index) => {
+        return checkIfImage(url) ? (
+          <div
+            key={index}
+            className="cursor-pointer my-2"
+            onClick={() => downloadFile(url)}
+          >
+            <img src={url} height={300} width={300} alt={`file-${index}`} />
+          </div>
+        ) : (
+          <div
+            key={index}
+            className="my-2 flex items-center justify-center gap-4"
+          >
+            <span className="text-white/8 text-3xl bg-black/20 rounded-full p-3">
+              <MdFolder />
+            </span>
+            <span>{url.split("/").pop()}</span>
+            <span
+              className="bg-black/20 p-3 text-2xl rounded-full hover:bg-black/50 cursor-pointer transition-all duration-300"
+              onClick={() => downloadFile(url)}
+            >
+              <IoMdArrowRoundDown />
+            </span>
+          </div>
+        );
+      });
+    };
+
+    return (
+      <div
+        className={`my-1 ${
+          message.sender._id === userDetails.id ? "text-right" : "text-left"
         }`}
       >
         {message.messageType === "text" && (

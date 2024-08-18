@@ -30,3 +30,34 @@ export const createRoom = async (req, res, next) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+
+export const getRooms = async (req, res, next) => {
+  try {
+    const adminId = req.userId;
+
+    if (!adminId) {
+      return res
+        .status(400)
+        .json({ message: "User ID is missing from request." });
+    }
+
+    // Fetch rooms where the user is either an admin or a member
+    const rooms = await Room.find({
+      $or: [{ admin: adminId }, { members: adminId }],
+    }).sort({ updatedAt: -1 });
+
+    // Ensure that rooms is an array
+    if (!Array.isArray(rooms) || rooms.length === 0) {
+      return res.status(404).json({ message: "No rooms found for the user." });
+    }
+
+    return res.status(200).json({ rooms });
+  } catch (error) {
+    console.error("Error fetching rooms:", error);
+
+    return res.status(500).json({
+      message: "Internal server error. Please try again later.",
+      error: error.message || "Unknown error",
+    });
+  }
+};

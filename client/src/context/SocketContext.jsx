@@ -33,12 +33,24 @@ export const SocketContextProvider = ({ children }) => {
             selectedChatData._id === message.sender._id) ||
           selectedChatData._id === message.recipient._id
         ) {
-          console.log("message recieved", message);
+          addMessage(message);
+        }
+      };
+
+      const handleRoomRecieveMessage = (message) => {
+        const { selectedChatType, selectedChatData, addMessage } =
+          useAppStore.getState();
+
+        if (
+          selectedChatType !== undefined &&
+          selectedChatData._id === message.roomId
+        ) {
           addMessage(message);
         }
       };
 
       socket.current.on("recieveMessage", handleRecieveMessage);
+      socket.current.on("receiveRoomMessage", handleRoomRecieveMessage);
     }
     return () => {
       if (socket.current) {

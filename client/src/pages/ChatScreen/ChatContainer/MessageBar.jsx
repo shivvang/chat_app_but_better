@@ -82,6 +82,19 @@ function MessageBar() {
 
       setMessage("");
       setUploadedFileUrls([]);
+    } else if (selectedChatType === "room") {
+      const messagePayload = {
+        sender: userDetails.id,
+        roomId: selectedChatData._id,
+        messageType: uploadedFileUrls.length ? "file" : "text",
+        fileUrl: uploadedFileUrls.length ? uploadedFileUrls : undefined,
+        content: uploadedFileUrls.length ? undefined : message,
+      };
+
+      socket.emit("sendRoomMessage", messagePayload);
+
+      setMessage("");
+      setUploadedFileUrls([]);
     }
   };
 

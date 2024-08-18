@@ -1,5 +1,6 @@
 import { Server as socketIoServer } from "socket.io";
 import Message from "./models/message.model.js";
+import Room from "./models/room.model.js";
 const socketSetup = (server) => {
   const io = new socketIoServer(server, {
     cors: {
@@ -20,23 +21,94 @@ const socketSetup = (server) => {
     }
   };
 
-  const SendMessage = async (message) => {
-    const senderSocketId = userSocketMap.get(message.sender);
-    const recipientSocketId = userSocketMap.get(message.recipient);
+  const sendMessage = async (message) => {
+    try {
+      const { sender, recipient } = message;
 
-    const messageBeingShared = await Message.create(message);
+      // Validate required fields
+      if (!sender || !recipient || !message.messageType) {
+        throw new Error("Missing required message fields.");
+      }
 
-    console.log("stuff is in here", messageBeingShared);
+      // Fetch socket IDs for sender and recipient
+      const senderSocketId = userSocketMap.get(sender);
+      const recipientSocketId = userSocketMap.get(recipient);
 
-    const messageDataToBeShared = await Message.findById(messageBeingShared._id)
-      .populate("sender", "id email userName")
-      .populate("recipient", "id email userName");
+      // Create the new message in the database
+      const newMessage = await Message.create(message);
 
-    if (recipientSocketId) {
-      io.to(recipientSocketId).emit("recieveMessage", messageDataToBeShared);
+      console.log("New message created:", newMessage);
+
+      // Populate the message with sender and recipient details
+      const populatedMessage = await Message.findById(newMessage._id)
+        .populate("sender", "id email userName")
+        .populate("recipient", "id email userName");
+
+      // Send the message to the recipient if they are connected
+      if (recipientSocketId) {
+        io.to(recipientSocketId).emit("receiveMessage", populatedMessage);
+      }
+
+      // Send the message to the sender as confirmation
+      if (senderSocketId) {
+        io.to(senderSocketId).emit("receiveMessage", populatedMessage);
+      }
+    } catch (error) {
+      console.error("Error sending message:", error.message);
     }
-    if (senderSocketId) {
-      io.to(senderSocketId).emit("recieveMessage", messageDataToBeShared);
+  };
+
+  const sendRoomMessages = async (message) => {
+    try {
+      const { sender, roomId, messageType, fileUrl, content } = message;
+
+      // Validate required fields
+      if (!sender || !roomId || !messageType) {
+        throw new Error("Missing required message fields.");
+      }
+
+      // Create new message
+      const newMessage = await Message.create({
+        sender,
+        recipient: null,
+        messageType,
+        content,
+        fileUrl,
+      });
+
+      // Fetch the newly created message with sender details
+      const populatedMessage = await Message.findById(newMessage._id)
+        .populate("sender", "id email userName")
+        .exec();
+
+      // Update the room with the new message
+      const room = await Room.findByIdAndUpdate(
+        roomId,
+        { $push: { messages: newMessage._id } },
+        { new: true }
+      ).populate("members");
+
+      if (!room) {
+        throw new Error("Room not found.");
+      }
+
+      const messageData = { ...populatedMessage._doc, roomId: room._id };
+
+      // Notify all members of the room
+      room.members.forEach((member) => {
+        const memberSocketId = userSocketMap.get(member._id.toString());
+        if (memberSocketId) {
+          io.to(memberSocketId).emit("receiveRoomMessage", messageData);
+        }
+      });
+
+      // Notify the room admin if they have a socket connection
+      const adminSocketId = userSocketMap.get(room.admin.toString());
+      if (adminSocketId) {
+        io.to(adminSocketId).emit("receiveRoomMessage", messageData);
+      }
+    } catch (error) {
+      console.error("Error sending room message:", error.message);
     }
   };
 
@@ -49,7 +121,9 @@ const socketSetup = (server) => {
       console.log("user id not provided in here");
     }
 
-    socket.on("sendMessage", SendMessage);
+    socket.on("sendMessage", sendMessage);
+
+    socket.on("sendRoomMessage", sendRoomMessages);
 
     socket.on("disconnect", () => disconnect(socket));
   });

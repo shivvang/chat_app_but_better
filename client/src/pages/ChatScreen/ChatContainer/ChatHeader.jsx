@@ -12,7 +12,7 @@ function ChatHeader() {
         <div className="flex gap-4 items-center justify-center">
           <div className="w-12 h-12 relative">
             <Avatar className="h-12 w-12 rounded-full overflow-hidden">
-              {selectedChatData?.pfp ? (
+              {selectedChatType === "contact" && selectedChatData?.pfp ? (
                 <AvatarImage
                   src={selectedChatData.pfp}
                   alt="pfp"
@@ -20,14 +20,18 @@ function ChatHeader() {
                 />
               ) : (
                 <div className="uppercase h-12 w-12 text-lg md:text-xl lg:text-2xl text-neon-pink border-2 border-neon-blue flex items-center justify-center rounded-full">
-                  {selectedChatData?.userName?.charAt(0) ||
-                    selectedChatData?.email?.charAt(0)}
+                  {selectedChatType === "room"
+                    ? selectedChatData?.name?.charAt(0)
+                    : selectedChatData?.userName?.charAt(0) ||
+                      selectedChatData?.email?.charAt(0)}
                 </div>
               )}
             </Avatar>
           </div>
           <span className="text-neon-pink text-lg md:text-xl lg:text-2xl font-semibold">
-            {selectedChatData.userName}
+            {selectedChatType === "contact"
+              ? selectedChatData.userName
+              : selectedChatData?.name}
           </span>
         </div>
         <div className="flex items-center justify-center gap-3 md:gap-5">
