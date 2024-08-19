@@ -1,5 +1,6 @@
 // eslint-disable-next-line no-unused-vars
 import React, { useEffect, useState } from "react";
+import _ from "lodash";
 import {
   Tooltip,
   TooltipContent,
@@ -51,7 +52,8 @@ function NewConversation() {
     }
   }, [NewContact]);
 
-  const searchContacts = async (searchTerm) => {
+  // Debounced searchContacts function
+  const debouncedSearchContacts = _.debounce(async (searchTerm) => {
     try {
       const response = await apiClient.post(
         SEARCH_CONTACT,
@@ -59,13 +61,17 @@ function NewConversation() {
         { withCredentials: true }
       );
       if (response.status === 200 && response.data.contacts) {
-        console.log(response);
         setSearchedContacts(response.data.contacts);
       }
     } catch (error) {
       console.log({ error });
     }
+  }, 300);
+
+  const handleInputChange = (e) => {
+    debouncedSearchContacts(e.target.value);
   };
+
   const selectNewContact = async (contact) => {
     setNewContact(false);
     setSelectedChatType("contact");
@@ -100,7 +106,7 @@ function NewConversation() {
             <Input
               placeholder="Search contacts"
               className="rounded-lg p-3 bg-[#2c2e3b] text-white border-none focus:outline-none focus:ring-2 focus:ring-neon-blue"
-              onChange={(e) => searchContacts(e.target.value)}
+              onChange={handleInputChange}
             />
           </div>
           <ScrollArea className="h-[250px]">

@@ -1,14 +1,13 @@
-/* eslint-disable react/prop-types */
 // eslint-disable-next-line no-unused-vars
-import React, { useEffect, useState } from "react";
+import React, { Suspense, lazy } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-// import { toast } from "sonner";
-import Auth from "./pages/Auth/Auth";
-import ChatScreen from "./pages/ChatScreen/ChatScreen";
-import Profile from "./pages/Profile/Profile";
+
+// Lazy load pages
+const Auth = lazy(() => import("./pages/Auth/Auth"));
+const ChatScreen = lazy(() => import("./pages/ChatScreen/ChatScreen"));
+const Profile = lazy(() => import("./pages/Profile/Profile"));
+
 import { useAppStore } from "./zustand/store";
-// import { apiClient } from "./lib/api-client";
-// import { GET_USER_DETAILS } from "./utils/constant";
 
 const PrivateRoute = ({ children }) => {
   const { userDetails } = useAppStore();
@@ -23,44 +22,16 @@ const AlreadyAuthenticated = ({ children }) => {
   return isAuthenticated ? <Navigate to={"/chat"} /> : children;
 };
 
+const LoadingSpinner = () => (
+  <div className="flex justify-center items-center min-h-screen bg-gray-900">
+    <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-neon-green"></div>
+  </div>
+);
+
 function App() {
-  // const { userDetails, setUserDetails } = useAppStore();
-  // const [loading, setLoading] = useState(true);
-
-  // useEffect(() => {
-  //   const fetchUserDetails = async () => {
-  //     try {
-  //       const response = await apiClient.get(GET_USER_DETAILS, {
-  //         withCredentials: true,
-  //       });
-  //       console.log(response);
-  //       if (response.data.user) {
-  //         setUserDetails(response.data.user);
-  //       }
-  //     } catch (error) {
-  //       toast.error(
-  //         "Error fetching user details:",
-  //         error.response || error.message
-  //       );
-  //       setLoading(false);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-
-  //   if (!userDetails) {
-  //     fetchUserDetails();
-  //   } else {
-  //     setLoading(false);
-  //   }
-  // }, [userDetails, setUserDetails]);
-
-  // if (loading) {
-  //   return <div>Loading...</div>;
-  // }
-
   return (
     <BrowserRouter>
+      <Suspense fallback={<LoadingSpinner />}></Suspense>
       <Routes>
         <Route
           path="/auth"
