@@ -16,21 +16,29 @@ Welcome to the **Chat Application** repository! This project is a comprehensive 
 - **Throttling:** Limits the rate of message submissions to prevent abuse.
 - **Debouncing:** Reduces excessive API calls in the user search functionality to improve performance.
 
+
+
 ## 🛠️ Technologies Used
 
-- **Frontend:**
-  - **React:** For building interactive and dynamic user interfaces.
-  - **Tailwind CSS:** For styling and responsive design.
-  - **ShadCN:** For UI component design and implementation.
+### Frontend
 
-- **Backend:**
-  - **Node.js:** Runtime environment for the backend server.
-  - **Express.js:** Framework for handling server-side routing and logic.
-  - **Redis:** Manages server instance communication and caching.
-  - **MongoDB & Mongoose:** For database management and schema design.
+- **React:** Building interactive and dynamic user interfaces.
+- **Tailwind CSS:** For responsive design and styling.
+- **ShadCN:** UI component design and implementation.
+- **Zustand:** State management for efficient state handling.
+- **Socket.io (Client):** Real-time communication with the backend.
 
-- **File Storage:**
-  - **Cloudinary:** Handles file uploads, management, and deletion.
+### Backend
+
+- **Node.js:** Runtime environment for the backend server.
+- **Express.js:** Framework for server-side routing and logic.
+- **Socket.io (Server):** Real-time communication with the frontend.
+- **Redis:** For managing server instance communication and caching.
+- **MongoDB & Mongoose:** For database management and schema design.
+
+
+
+
 
 ## Getting Started
 
